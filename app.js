@@ -24,7 +24,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/userDB", {
+mongoose.connect("mongodb+srv://project-2:test-123@cluster0-r1wqh.mongodb.net/userDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -64,7 +64,7 @@ passport.use(
     },
 
     function (accessToken, refreshToken, profile, cb) {
-      console.log(profile);
+      //console.log(profile);
       User.findOrCreate(
         {
           googleId: profile.id,
@@ -97,11 +97,19 @@ app.get(
 );
 
 app.get("/login", function (req, res) {
-  res.render("login");
+  if (req.isAuthenticated()){
+    res.redirect('/secrets')
+  }else{
+    res.render("login");
+  }
 });
 
 app.get("/register", function (req, res) {
-  res.render("register");
+  if (req.isAuthenticated()){
+    res.redirect("/secrets")
+  }else{
+    res.render("register");
+  }
 });
 
 app.get("/secrets", function (req, res) {
@@ -156,6 +164,9 @@ app.post("/register", function (req, res) {
   );
 });
 
+
+
+
 app.post("/login", function (req, res) {
   const user = new User({
     username: req.body.username,
@@ -174,7 +185,7 @@ app.post("/login", function (req, res) {
 
 app.post("/submit", function (req, res) {
   const submittedSecret = req.body.secret;
-
+  //req.user give details of user login 
   User.findById(req.user.id, function (err, foundUser) {
     if (err) {
       console.log(err);
@@ -187,6 +198,11 @@ app.post("/submit", function (req, res) {
   });
 });
 
-app.listen(3000, function () {
-  console.log("app started at port 3000");
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
+
+app.listen(port, function () {
+  console.log("Server started");
 });
