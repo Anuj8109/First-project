@@ -64,7 +64,8 @@ passport.deserializeUser(function (id, done) {
 passport.use(new TwitterStrategy({
   consumerKey: process.env.CLIENT_ID_TWITTER,
   consumerSecret: process.env.CLIENT_SECRET_TWITTER,
-  callbackURL: "http://localhost:3000/auth/twitter/secrets"
+  //callbackURL: "http://localhost:3000/auth/twitter/secrets"
+  callbackURL: "https://itz-secret.herokuapp.com/auth/twitter/secrets",
 },
 function(token, tokenSecret, profile, cb) {
   //console.log(profile)
@@ -83,8 +84,8 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      //callbackURL: "https://itz-secret.herokuapp.com/auth/google/secrets",
-      callbackURL: "http://localhost:3000/auth/google/secrets",
+      callbackURL: "https://itz-secret.herokuapp.com/auth/google/secrets",
+      //callbackURL: "http://localhost:3000/auth/google/secrets",
     },
     function (accessToken, refreshToken, profile, cb) {
       //console.log(profile);
