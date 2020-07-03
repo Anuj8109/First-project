@@ -7,7 +7,8 @@ const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const findOrCreate = require("mongoose-findorcreate");
+const TwitterStrategy = require('passport-twitter').Strategy;
+const findOrCreate = require("mongoose-findorcreate")
 const app = express();
 
 app.set("view engine", "ejs");
@@ -24,19 +25,23 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb+srv://project-2:test-123@cluster0-r1wqh.mongodb.net/userDB", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(
+  process.env.DATABASE_LINK,
+  //"mongodb://localhost:27017/userDB",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
-  email: String,
-  password: String,
+  username : String,
   googleId: String,
-  provider: String,
-  displayName: String,
   secret: String,
+  twitterId :String,
+  provider : String,
+  password : String
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -55,21 +60,40 @@ passport.deserializeUser(function (id, done) {
     done(err, user);
   });
 });
+
+passport.use(new TwitterStrategy({
+  consumerKey: process.env.CLIENT_ID_TWITTER,
+  consumerSecret: process.env.CLIENT_SECRET_TWITTER,
+  callbackURL: "http://localhost:3000/auth/twitter/secrets"
+},
+function(token, tokenSecret, profile, cb) {
+  //console.log(profile)
+  User.findOrCreate({
+     twitterId: profile.id,
+     provider : profile.provider,
+     username : profile.screen_name ,
+     password : profile.id + profile.screen_name
+   }, function (err, user) {
+    return cb(err, user);
+  });
+}
+));
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "https://itz-secret.herokuapp.com/auth/google/secrets",
+      //callbackURL: "https://itz-secret.herokuapp.com/auth/google/secrets",
+      callbackURL: "http://localhost:3000/auth/google/secrets",
     },
-
     function (accessToken, refreshToken, profile, cb) {
       //console.log(profile);
       User.findOrCreate(
         {
           googleId: profile.id,
           provider: profile.provider,
-          displayName: profile.displayName,
+          username: profile.displayName,
+          password : profile.id + profile.displayName
         },
         function (err, user) {
           return cb(err, user);
@@ -96,18 +120,28 @@ app.get(
   }
 );
 
+app.get('/auth/twitter',
+  passport.authenticate('twitter'));
+
+app.get('/auth/twitter/secrets', 
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/secrets');
+  });
+
 app.get("/login", function (req, res) {
-  if (req.isAuthenticated()){
-    res.redirect('/secrets')
-  }else{
+  if (req.isAuthenticated()) {
+    res.redirect("/secrets");
+  } else {
     res.render("login");
   }
 });
 
 app.get("/register", function (req, res) {
-  if (req.isAuthenticated()){
-    res.redirect("/secrets")
-  }else{
+  if (req.isAuthenticated()) {
+    res.redirect("/secrets");
+  } else {
     res.render("register");
   }
 });
@@ -123,8 +157,8 @@ app.get("/secrets", function (req, res) {
         }
       }
     });
-  }else{
-    res.redirect("/login")
+  } else {
+    res.redirect("/login");
   }
   // if (req.isAuthenticated()) {
 
@@ -164,9 +198,6 @@ app.post("/register", function (req, res) {
   );
 });
 
-
-
-
 app.post("/login", function (req, res) {
   const user = new User({
     username: req.body.username,
@@ -174,7 +205,7 @@ app.post("/login", function (req, res) {
   });
   req.login(user, function (err) {
     if (err) {
-      console.log(err);
+      res.send("<h1>Username or password is wrong</h1>");
     } else {
       passport.authenticate("local")(req, res, function () {
         res.redirect("/secrets");
@@ -185,7 +216,7 @@ app.post("/login", function (req, res) {
 
 app.post("/submit", function (req, res) {
   const submittedSecret = req.body.secret;
-  //req.user give details of user login 
+  //req.user give details of user login
   User.findById(req.user.id, function (err, foundUser) {
     if (err) {
       console.log(err);
