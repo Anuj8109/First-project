@@ -26,7 +26,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose.connect(
-  "mongodb+srv://project-2:"+ process.env.DATABASE_PASSWORD + "@cluster0-r1wqh.mongodb.net/userDB",
+  "mongodb+srv://project-2:"+ process.env.DATABASE_PASSWORD +"@cluster0-r1wqh.mongodb.net/userDB",
   //"mongodb://localhost:27017/userDB",
   {
     useNewUrlParser: true,
