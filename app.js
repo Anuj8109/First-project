@@ -7,8 +7,8 @@ const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const TwitterStrategy = require('passport-twitter').Strategy;
-const findOrCreate = require("mongoose-findorcreate")
+const TwitterStrategy = require("passport-twitter").Strategy;
+const findOrCreate = require("mongoose-findorcreate");
 const app = express();
 
 app.set("view engine", "ejs");
@@ -26,7 +26,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose.connect(
-  "mongodb+srv://project-2:test-123@cluster0-r1wqh.mongodb.net/userDB",
+  "mongodb+srv://project-2:"+ process.env.DATABASE_PASSWORD + "@cluster0-r1wqh.mongodb.net/userDB",
   //"mongodb://localhost:27017/userDB",
   {
     useNewUrlParser: true,
@@ -36,13 +36,18 @@ mongoose.connect(
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
-  username : String,
+  username: String,
   googleId: String,
-  secret: String,
-  twitterId :String,
-  provider : String,
-  password : String
+  twitterId: String,
+  provider: String,
+  password: String,
 });
+
+const secretSchema = new mongoose.Schema({
+  secret : String
+})
+
+const Secret = mongoose.model("Secret",secretSchema);
 
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
@@ -61,24 +66,30 @@ passport.deserializeUser(function (id, done) {
   });
 });
 
-passport.use(new TwitterStrategy({
-  consumerKey: process.env.CLIENT_ID_TWITTER,
-  consumerSecret: process.env.CLIENT_SECRET_TWITTER,
-  //callbackURL: "http://localhost:3000/auth/twitter/secrets"
-  callbackURL: "https://itz-secret.herokuapp.com/auth/twitter/secrets",
-},
-function(token, tokenSecret, profile, cb) {
-  //console.log(profile)
-  User.findOrCreate({
-     twitterId: profile.id,
-     provider : profile.provider,
-     username : profile.screen_name ,
-     password : profile.id + profile.screen_name
-   }, function (err, user) {
-    return cb(err, user);
-  });
-}
-));
+passport.use(
+  new TwitterStrategy(
+    {
+      consumerKey: process.env.CLIENT_ID_TWITTER,
+      consumerSecret: process.env.CLIENT_SECRET_TWITTER,
+      //callbackURL: "http://localhost:3000/auth/twitter/secrets"
+      callbackURL: "https://itz-secret.herokuapp.com/auth/twitter/secrets",
+    },
+    function (token, tokenSecret, profile, cb) {
+      //console.log(profile)
+      User.findOrCreate(
+        {
+          twitterId: profile.id,
+          provider: profile.provider,
+          username: profile.screen_name,
+          password: profile.id + profile.screen_name,
+        },
+        function (err, user) {
+          return cb(err, user);
+        }
+      );
+    }
+  )
+);
 passport.use(
   new GoogleStrategy(
     {
@@ -94,7 +105,7 @@ passport.use(
           googleId: profile.id,
           provider: profile.provider,
           username: profile.displayName,
-          password : profile.id + profile.displayName
+          password: profile.id + profile.displayName,
         },
         function (err, user) {
           return cb(err, user);
@@ -121,15 +132,16 @@ app.get(
   }
 );
 
-app.get('/auth/twitter',
-  passport.authenticate('twitter'));
+app.get("/auth/twitter", passport.authenticate("twitter"));
 
-app.get('/auth/twitter/secrets', 
-  passport.authenticate('twitter', { failureRedirect: '/login' }),
-  function(req, res) {
+app.get(
+  "/auth/twitter/secrets",
+  passport.authenticate("twitter", { failureRedirect: "/login" }),
+  function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect('/secrets');
-  });
+    res.redirect("/secrets");
+  }
+);
 
 app.get("/login", function (req, res) {
   if (req.isAuthenticated()) {
@@ -149,24 +161,20 @@ app.get("/register", function (req, res) {
 
 app.get("/secrets", function (req, res) {
   if (req.isAuthenticated()) {
-    User.find({ secret: { $ne: null } }, function (err, foundUser) {
+    Secret.find({}, function (err, secrets) {
       if (err) {
         res.send(err);
       } else {
-        if (foundUser) {
-          res.render("secrets", { usersWithSecrets: foundUser });
-        }
+        res.render("secrets", { usersWithSecrets: secrets });
+        // if (foundUser) {
+        //   console.log(foundUser)
+        //   res.render("secrets", { usersWithSecrets: secrets });
+        // }
       }
     });
   } else {
     res.redirect("/login");
   }
-  // if (req.isAuthenticated()) {
-
-  //   res.render("secrets");
-  // } else {
-  //   res.redirect("/login");
-  // }
 });
 
 app.get("/logout", function (req, res) {
@@ -218,16 +226,24 @@ app.post("/login", function (req, res) {
 app.post("/submit", function (req, res) {
   const submittedSecret = req.body.secret;
   //req.user give details of user login
-  User.findById(req.user.id, function (err, foundUser) {
-    if (err) {
-      console.log(err);
-    } else {
-      foundUser.secret = submittedSecret;
-      foundUser.save(function () {
-        res.redirect("/secrets");
-      });
-    }
-  });
+  let NewSecret = new Secret({
+    secret : submittedSecret
+  })
+  NewSecret.save(function(){
+    res.redirect('/secrets')
+  })
+  // User.findById(req.user.id, function (err, foundUser) {
+  //   if (err) {
+  //     console.log(err);
+  //   } else {
+  //     foundUser.secret.push(submittedSecret);
+  //     console.log(foundUser.secret)
+  //     foundUser.save(function () {
+  //       res.redirect("/secrets");
+  //     });
+  //     console.log(foundUser)
+  //   }
+  // });
 });
 
 let port = process.env.PORT;
