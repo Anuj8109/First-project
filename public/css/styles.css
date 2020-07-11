@@ -7,10 +7,20 @@ body {
     padding-top: 200px;
     text-align: center;
 }
-
-.secret-text {
-  text-align: center;
-  font-size: 2rem;
+.secret{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   color: #fff;
   background-color: #000;
+  margin:8px 0px;
+  justify-content: space-between;
+}
+.secret-text {
+  font-size: 2rem;
+  margin-left: 0.3rem;
+}
+.secret-date{
+  font-size: 1.5rem;
+  align-self: center;
 }

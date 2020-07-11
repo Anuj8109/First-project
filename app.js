@@ -10,11 +10,15 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const TwitterStrategy = require("passport-twitter").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 const app = express();
-
+const home = require("./routes/home");
+const login = require("./routes/login");
+const register = require("./routes/register");
+const moment = require("moment-timezone");
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
-
+// var m = moment().tz('Asia/Kolkata').format('HH:mm:ss DD-MM-YYYY');
+// console.log(m);
 app.use(
   session({
     secret: process.env.SECRET,
@@ -44,10 +48,12 @@ const userSchema = new mongoose.Schema({
 });
 
 const secretSchema = new mongoose.Schema({
-  secret : String
-})
+  secret: String,
+  date : String,
+  key_id : String
+});
 
-const Secret = mongoose.model("Secret",secretSchema);
+const Secret = mongoose.model("Secret", secretSchema);
 
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
@@ -114,10 +120,12 @@ passport.use(
     }
   )
 );
+//using routing in express
+app.use(home);
 
-app.get("/", function (req, res) {
-  res.render("home");
-});
+// app.get("/", function (req, res) {
+//   res.render("home");
+// });
 
 app.get(
   "/auth/google",
@@ -142,22 +150,8 @@ app.get(
     res.redirect("/secrets");
   }
 );
-
-app.get("/login", function (req, res) {
-  if (req.isAuthenticated()) {
-    res.redirect("/secrets");
-  } else {
-    res.render("login");
-  }
-});
-
-app.get("/register", function (req, res) {
-  if (req.isAuthenticated()) {
-    res.redirect("/secrets");
-  } else {
-    res.render("register");
-  }
-});
+app.use(login);
+app.use(register);
 
 app.get("/secrets", function (req, res) {
   if (req.isAuthenticated()) {
@@ -165,7 +159,7 @@ app.get("/secrets", function (req, res) {
       if (err) {
         res.send(err);
       } else {
-        res.render("secrets", { usersWithSecrets: secrets });
+        res.render("secrets", { usersWithSecrets: secrets,type:"My Secrets" });
         // if (foundUser) {
         //   console.log(foundUser)
         //   res.render("secrets", { usersWithSecrets: secrets });
@@ -189,6 +183,23 @@ app.get("/submit", function (req, res) {
     res.redirect("/login");
   }
 });
+
+app.get('/your',function(req,res){
+  if(req.isAuthenticated()){
+    Secret.find({key_id : req.user._id},function(err,yourSecrets){
+      if(err){
+        console.log(err)
+      }else{
+        res.render("secrets",{usersWithSecrets:yourSecrets,type:"Public Secrets"})
+      }
+    })
+  }else{
+    res.redirect('/login')
+  }
+})
+app.get('/Public',function(req,res){
+  res.redirect('/secrets')
+})
 
 app.post("/register", function (req, res) {
   User.register(
@@ -225,13 +236,18 @@ app.post("/login", function (req, res) {
 
 app.post("/submit", function (req, res) {
   const submittedSecret = req.body.secret;
+  const dateTime = moment().tz("Asia/Kolkata").format("HH:mm:ss DD-MM-YYYY");
+  // console.log(dateTime);
+  // console.log(req.user)
   //req.user give details of user login
   let NewSecret = new Secret({
-    secret : submittedSecret
-  })
-  NewSecret.save(function(){
-    res.redirect('/secrets')
-  })
+    secret: submittedSecret,
+    date : dateTime,
+    key_id : req.user._id
+  });
+  NewSecret.save(function () {
+    res.redirect("/secrets");
+  });
   // User.findById(req.user.id, function (err, foundUser) {
   //   if (err) {
   //     console.log(err);
