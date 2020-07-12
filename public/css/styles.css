@@ -1,26 +1,120 @@
-
-body {
-  background-color: #E8ECEF;
+body,
+.container,
+.card{
+  /* background-color: #e8ecef; */
+  background-color: #0cbaba;
+  background-image: linear-gradient(315deg, #0cbaba 0%, #581156 74%); 
+  color: #fff;
+  /* background-color: #f5f186;
+  background-image: linear-gradient(315deg, #f5f186 0%, #9dfbc8 74%); */
+  margin-top:20px;
+  margin-bottom: 20px;
+  font-family: 'Fondamento', cursive;
 }
 
 .centered {
-    padding-top: 200px;
-    text-align: center;
+  padding-top: 200px;
+  text-align: center;
 }
-.secret{
+.secret {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   color: #fff;
-  background-color: #000;
-  margin:8px 0px;
+  margin: 8px 0px;
   justify-content: space-between;
 }
 .secret-text {
   font-size: 2rem;
   margin-left: 0.3rem;
 }
-.secret-date{
+.secret-date {
   font-size: 1.5rem;
   align-self: center;
+}
+
+.link{
+  color:#0ECF32 ;
+}
+.link:hover{
+  color: #56d293;
+}
+
+
+/* Login and register button  */
+.example_f {
+  border-radius: 27px;
+  background: linear-gradient(to right, #67b26b, #4ca2cb) !important;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 20px;
+  width: 200px;
+  transition: all 0.4s;
+  cursor: pointer;
+  margin: 5px;
+}
+.example_f span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.4s;
+}
+.example_f span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+.example_f:hover span {
+  padding-right: 25px;
+}
+.example_f:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+.button {
+  height: 50px;
+  width: 200px;
+  background: #f3f0f1;
+  position: relative;
+  margin: auto;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  box-shadow: -3px -3px 5px rgba(255, 255, 255, 0.8),
+      6px 6px 10px rgba(0, 0, 0, 0.2);
+  color: #6f6cde;
+}
+.button>button{
+  border: none;
+  outline: none;
+  padding: 0;
+}
+span {
+  line-height: 40px;
+  font-size: 25px;
+  font-weight: bolder;
+}
+.button:hover{
+  opacity: 0.3;
+  box-shadow: -3px -3px 5px rgba(16, 130, 145, 0.8),
+        6px 6px 10px rgba(18, 235, 115, 0.2);
+}
+.button:active {
+  opacity: 1;
+  box-shadow: inset -2px -2px 4px rgba(255, 255, 255, 0.5),
+    inset 8px 8px 16px rgba(0, 0, 0, 0.1);
+  color: #79e3b6;
+}
+
+.flex-button{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  margin-top: -5px;
 }
