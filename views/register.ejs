@@ -1,23 +1,22 @@
 <%- include('partials/header') %>
 <div class="container mt-5">
-  <h1>Register</h1>
+  <h1>New Member</h1>
 
   <div class="row">
-    <div class="col-sm-7">
+    <div class="col">
       <div class="card">
         <div class="card-body">
           <!-- Makes POST request to /register route -->
           <form action="/register" method="POST">
             <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" class="form-control" name="username" required />
+              <input type="email" class="form-control" name="username" required placeholder="E-Mail" />
             </div>
             <div class="form-group">
-              <label for="password" >Password</label>
-              <input type="password" class="form-control" name="password" minlength="6" required/>
+              <input type="password" class="form-control" name="password" minlength="6" placeholder="password" required/>
             </div>
-            <button class="button" type="submit"><span>Register</span></button>
+            <button class="button" type="submit" style="background-color: #BFD7EA;margin-bottom:10px"><span>Register</span></button>
           </form>
+          <a href="/login" class="account button mt-4">Already Member<span><i class="fa fa-arrow-right" aria-hidden="true"></i></span></a>
         </div>
       </div>
     </div>

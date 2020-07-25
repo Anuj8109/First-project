@@ -1,15 +1,17 @@
 body,
 .container,
-.card{
+.card {
   /* background-color: #e8ecef; */
   background-color: #0cbaba;
-  background-image: linear-gradient(315deg, #0cbaba 0%, #581156 74%); 
+  background-image: linear-gradient(315deg, #0cbaba 0%, #581156 74%);
   color: #fff;
   /* background-color: #f5f186;
   background-image: linear-gradient(315deg, #f5f186 0%, #9dfbc8 74%); */
-  margin-top:20px;
+  margin-top: 20px;
   margin-bottom: 20px;
-  font-family: 'Fondamento', cursive;
+  font-family: "Fondamento", cursive;
+  background-color: #989dd1;
+  background-image: url("https://www.transparenttextures.com/patterns/cartographer.png");
 }
 
 .centered {
@@ -33,20 +35,19 @@ body,
   align-self: center;
 }
 
-.link{
-  color:#0ECF32 ;
+.link {
+  color: #0ecf32;
 }
-.link:hover{
+.link:hover {
   color: #56d293;
 }
-
 
 /* Login and register button  */
 .example_f {
   border-radius: 27px;
   background: linear-gradient(to right, #67b26b, #4ca2cb) !important;
   border: none;
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: center;
   text-transform: uppercase;
   padding: 20px;
@@ -62,7 +63,7 @@ body,
   transition: 0.4s;
 }
 .example_f span:after {
-  content: '\00bb';
+  content: "\00bb";
   position: absolute;
   opacity: 0;
   top: 0;
@@ -87,10 +88,10 @@ body,
   cursor: pointer;
   transition: all 0.1s ease-in-out;
   box-shadow: -3px -3px 5px rgba(255, 255, 255, 0.8),
-      6px 6px 10px rgba(0, 0, 0, 0.2);
+    6px 6px 10px rgba(0, 0, 0, 0.2);
   color: #6f6cde;
 }
-.button>button{
+.button > button {
   border: none;
   outline: none;
   padding: 0;
@@ -100,10 +101,10 @@ span {
   font-size: 25px;
   font-weight: bolder;
 }
-.button:hover{
+.button:hover {
   opacity: 0.3;
   box-shadow: -3px -3px 5px rgba(16, 130, 145, 0.8),
-        6px 6px 10px rgba(18, 235, 115, 0.2);
+    6px 6px 10px rgba(18, 235, 115, 0.2);
 }
 .button:active {
   opacity: 1;
@@ -112,9 +113,21 @@ span {
   color: #79e3b6;
 }
 
-.flex-button{
+.flex-button {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
   margin-top: -5px;
+}
+
+.account{
+  margin-top: 10px;
+  padding: 5px;
+  text-decoration: none;
+  font-size: 1.3rem;
+}
+.account:hover{
+  color: #581156;
+  text-decoration: none;
+  display: inline;
 }
