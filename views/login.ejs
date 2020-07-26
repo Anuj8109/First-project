@@ -7,28 +7,57 @@
     <div class="col-7">
       <div class="card">
         <div class="card-body">
-
           <!-- Makes POST request to /login route -->
           <form action="/login" method="POST">
             <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" class="form-control" name="username" required>
+              <div style="display: flex;" class="input-field">
+                <i class="fa fa-envelope icon" aria-hidden="true"></i>
+                <input
+                  type="email"
+                  class="form-control input"
+                  name="username"
+                  placeholder="E-Mail"
+                  required
+                />
+              </div>
             </div>
             <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" class="form-control" name="password" minlength="6" required>
+              <div style="display: flex;" class="input-field">
+              <i class="fa fa-key icon" aria-hidden="true"></i>
+              <input
+                type="password"
+                class="form-control"
+                name="password"
+                minlength="6"
+                placeholder="Password"
+                required
+              />
             </div>
-            <button type="submit" class="button" style="background-color: #BFD7EA;margin-bottom:10px"><span>Login</span></button>
+            </div>
+            <button
+              type="submit"
+              class="button"
+              style="background-color: #bfd7ea; margin-bottom: 10px;"
+            >
+              <span>Login</span>
+            </button>
           </form>
-          <a href="/register" class="account button mt-4">Create Your Account       <span><i class="fa fa-arrow-right" aria-hidden="true"></i></span></a>
+          <a href="/register" class="account button mt-4"
+            >Create Your Account
+            <span><i class="fa fa-arrow-right" aria-hidden="true"></i></span
+          ></a>
         </div>
       </div>
     </div>
 
-    <div class="col-sm-5 ">
+    <div class="col-sm-5">
       <div class="card">
         <div class="card-body">
-          <a class="btn btn-block btn-social btn-google" href="/auth/google" role="button">
+          <a
+            class="btn btn-block btn-social btn-google"
+            href="/auth/google"
+            role="button"
+          >
             <i class="fab fa-google"></i>
             Sign In with Google
           </a>
@@ -37,14 +66,17 @@
 
       <div class="card">
         <div class="card-body">
-          <a class="btn btn-block btn-social btn-twitter" href="/auth/twitter" role="button">
+          <a
+            class="btn btn-block btn-social btn-twitter"
+            href="/auth/twitter"
+            role="button"
+          >
             <i class="fab fa-twitter"></i>
             Sign In with Twittter
           </a>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 

@@ -40,6 +40,7 @@ mongoose.connect(
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
+  name : String,
   username: String,
   googleId: String,
   twitterId: String,
@@ -203,7 +204,7 @@ app.get('/Public',function(req,res){
 
 app.post("/register", function (req, res) {
   User.register(
-    { username: req.body.username, active: false },
+    { username: req.body.username,name:req.body.name, active: false },
     req.body.password,
     function (err, user) {
       if (err) {
@@ -261,6 +262,17 @@ app.post("/submit", function (req, res) {
   //   }
   // });
 });
+
+app.get("/delete/:id",function(req,res){
+  Secret.findByIdAndRemove(req.params.id,function(err,book){
+    if(err){
+      console.log(err)
+    }else{
+      //console.log(book)
+      res.redirect("/your")
+    }
+  })
+})
 
 let port = process.env.PORT;
 if (port == null || port == "") {

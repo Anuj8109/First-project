@@ -1,0 +1,13 @@
+.input-field{
+    background-color: white;
+    border: 2px white;
+}
+.icon {
+    color:white;
+    background-color: dodgerblue;
+    padding: 10px;
+}
+.delete{
+    color: red;
+    padding: 5px;
+}
