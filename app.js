@@ -40,7 +40,7 @@ mongoose.connect(
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
-  name : String,
+  name: String,
   username: String,
   googleId: String,
   twitterId: String,
@@ -50,8 +50,8 @@ const userSchema = new mongoose.Schema({
 
 const secretSchema = new mongoose.Schema({
   secret: String,
-  date : String,
-  key_id : String
+  date: String,
+  key_id: String,
 });
 
 const Secret = mongoose.model("Secret", secretSchema);
@@ -122,11 +122,14 @@ passport.use(
   )
 );
 //using routing in express
-app.use(home);
+//app.use(home);
 
 // app.get("/", function (req, res) {
 //   res.render("home");
 // });
+app.get("/", function (req, res) {
+  res.redirect("/secrets");
+});
 
 app.get(
   "/auth/google",
@@ -155,22 +158,46 @@ app.use(login);
 app.use(register);
 
 app.get("/secrets", function (req, res) {
-  if (req.isAuthenticated()) {
+  //console.log(req.isAuthenticated())
     Secret.find({}, function (err, secrets) {
       if (err) {
         res.send(err);
       } else {
-        res.render("secrets", { usersWithSecrets: secrets,type:"My Secrets" });
+        res.render("secrets2", {
+          usersWithSecrets: secrets,
+          type: "My Secrets",
+          secretLength : (secrets.length)/2,
+          user : req.isAuthenticated(),
+          start: secrets.length - 1,
+          current : 1,
+          max : 2
+        });
         // if (foundUser) {
         //   console.log(foundUser)
         //   res.render("secrets", { usersWithSecrets: secrets });
         // }
       }
     });
-  } else {
-    res.redirect("/login");
-  }
 });
+
+app.get('/secrets/:page',function(req,res){
+  var p = req.params.page
+  Secret.find({},function(err,secrets){
+    if(err){
+      res.send("DataBase problem")
+    }else{
+      res.render("secretPage",{
+        usersWithSecrets: secrets,
+        type: "My Secrets",
+        secretLength : (secrets.length)/2,
+        user : req.isAuthenticated(),
+        start: secrets.length - 1 - p*2,
+        current : p,
+        max : 2
+      })
+    }
+  })
+})
 
 app.get("/logout", function (req, res) {
   req.logOut();
@@ -179,32 +206,41 @@ app.get("/logout", function (req, res) {
 
 app.get("/submit", function (req, res) {
   if (req.isAuthenticated()) {
-    res.render("submit");
+    res.render("submit2");
   } else {
     res.redirect("/login");
   }
 });
 
-app.get('/your',function(req,res){
-  if(req.isAuthenticated()){
-    Secret.find({key_id : req.user._id},function(err,yourSecrets){
-      if(err){
-        console.log(err)
-      }else{
-        res.render("secrets",{usersWithSecrets:yourSecrets,type:"Public Secrets"})
+app.get("/your", function (req, res) {
+  if (req.isAuthenticated()) {
+    Secret.find({ key_id: req.user._id }, function (err, yourSecrets) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(yourSecrets)
+        res.render("secrets2", {
+          usersWithSecrets: yourSecrets,
+          type: "Public Secrets",
+          user : req.isAuthenticated(),
+          start: yourSecrets.length - 1,
+          current : 1,
+          secretLength : (yourSecrets.length)/2,
+          max : yourSecrets.length
+        });
       }
-    })
-  }else{
-    res.redirect('/login')
+    });
+  } else {
+    res.redirect("/login");
   }
-})
-app.get('/Public',function(req,res){
-  res.redirect('/secrets')
-})
+});
+app.get("/Public", function (req, res) {
+  res.redirect("/secrets");
+});
 
 app.post("/register", function (req, res) {
   User.register(
-    { username: req.body.username,name:req.body.name, active: false },
+    { username: req.body.username, name: req.body.name, active: false },
     req.body.password,
     function (err, user) {
       if (err) {
@@ -243,8 +279,8 @@ app.post("/submit", function (req, res) {
   //req.user give details of user login
   let NewSecret = new Secret({
     secret: submittedSecret,
-    date : dateTime,
-    key_id : req.user._id
+    date: dateTime,
+    key_id: req.user._id,
   });
   NewSecret.save(function () {
     res.redirect("/secrets");
@@ -263,16 +299,16 @@ app.post("/submit", function (req, res) {
   // });
 });
 
-app.get("/delete/:id",function(req,res){
-  Secret.findByIdAndRemove(req.params.id,function(err,book){
-    if(err){
-      console.log(err)
-    }else{
+app.get("/delete/:id", function (req, res) {
+  Secret.findByIdAndRemove(req.params.id, function (err, book) {
+    if (err) {
+      console.log(err);
+    } else {
       //console.log(book)
-      res.redirect("/your")
+      res.redirect("/your");
     }
-  })
-})
+  });
+});
 
 let port = process.env.PORT;
 if (port == null || port == "") {

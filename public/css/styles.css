@@ -1,19 +1,21 @@
+
 body,
 .container,
+.bgdesign,
 .card {
-  /* background-color: #e8ecef; */
+  /* background-color: #e8ecef;
   background-color: #0cbaba;
   background-image: linear-gradient(315deg, #0cbaba 0%, #581156 74%);
-  color: #fff;
+  color: #fff; */
   /* background-color: #f5f186;
   background-image: linear-gradient(315deg, #f5f186 0%, #9dfbc8 74%); */
+  color: #fff;
   margin-top: 20px;
   margin-bottom: 20px;
   font-family: "Fondamento", cursive;
   background-color: #989dd1;
-  background-image: url("https://www.transparenttextures.com/patterns/cartographer.png");
+  background-image: url("https://www.transparenttextures.com/patterns/cartographer.png"); 
 }
-
 .centered {
   padding-top: 200px;
   text-align: center;
@@ -120,13 +122,13 @@ span {
   margin-top: -5px;
 }
 
-.account{
+.account {
   margin-top: 10px;
   padding: 5px;
   text-decoration: none;
   font-size: 1.3rem;
 }
-.account:hover{
+.account:hover {
   color: #581156;
   text-decoration: none;
   display: inline;
