@@ -1,13 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const bodyParser = require("body-parser");
-const ejs = require("ejs");
-const mongoose = require("mongoose");
-const session = require("express-session");
-const passport = require("passport");
-const passportLocalMongoose = require("passport-local-mongoose");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const TwitterStrategy = require("passport-twitter").Strategy;
+require("dotenv").config();//for passords
+const express = require("express");//basic
+const bodyParser = require("body-parser");//for collect data in form
+const ejs = require("ejs"); //for use js in html or dynamic linking
+const mongoose = require("mongoose");//database
+const session = require("express-session");///cokkies
+const passport = require("passport");//for login and session cokkies
+const passportLocalMongoose = require("passport-local-mongoose");//local mongoose
+const GoogleStrategy = require("passport-google-oauth20").Strategy;//google login
+const TwitterStrategy = require("passport-twitter").Strategy;//twitter login
 const findOrCreate = require("mongoose-findorcreate");
 const app = express();
 const home = require("./routes/home");
@@ -30,8 +30,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose.connect(
-  "mongodb+srv://project-2:test-123@cluster0-r1wqh.mongodb.net/userDB",
-  //"mongodb://localhost:27017/userDB",
+  // "mongodb+srv://project-2:test-123@cluster0-r1wqh.mongodb.net/userDB",
+  "mongodb://localhost:27017/userDB",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -115,6 +115,7 @@ passport.use(
           password: profile.id + profile.displayName,
         },
         function (err, user) {
+          console.log(err);
           return cb(err, user);
         }
       );
@@ -127,9 +128,6 @@ passport.use(
 // app.get("/", function (req, res) {
 //   res.render("home");
 // });
-app.get("/", function (req, res) {
-  res.redirect("/secrets");
-});
 
 app.get(
   "/auth/google",
@@ -156,6 +154,10 @@ app.get(
 );
 app.use(login);
 app.use(register);
+
+app.get("/", function (req, res) {
+  res.redirect("/secrets");
+});
 
 app.get("/secrets", function (req, res) {
   //console.log(req.isAuthenticated())
@@ -186,7 +188,7 @@ app.get('/secrets/:page',function(req,res){
     if(err){
       res.send("DataBase problem")
     }else{
-      res.render("secretPage",{
+      res.render("secrets2",{
         usersWithSecrets: secrets,
         type: "My Secrets",
         secretLength : (secrets.length)/2,
