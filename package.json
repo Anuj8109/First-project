@@ -21,7 +21,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "md5": "^2.2.1",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "moment-timezone": "^0.5.31",
     "mongoose": "^5.9.20",
     "mongoose-encryption": "^2.0.2",
